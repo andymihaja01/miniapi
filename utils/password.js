@@ -7,7 +7,6 @@ exports.makeSalt = function(length = 16){
 
 
 exports.hash = function(password, salt){
-    console.log("CALLED HASH")
     var hash = crypto.createHmac('sha512', salt);
     hash.update(password);
     var value = hash.digest('hex');

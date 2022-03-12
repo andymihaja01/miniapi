@@ -8,12 +8,13 @@ exports.validateToken = function(req, res, next){
         res.status(400).send("Token not present")
     }  else {
 
-        jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+        jwt.verify(token, ACCESS_TOKEN_SECRET, async(err, user) => {
             if (err) { 
                 res.status(403).send("Token invalid")
             }
             else {
-                req.user = user
+                const fullUser = await UserService.findById(user.id)
+                req.user = fullUser
                 next() 
             }
         })

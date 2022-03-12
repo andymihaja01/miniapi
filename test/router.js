@@ -1,10 +1,6 @@
-process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'mongodb://localhost:27017/postscrudjwt-test';
-process.env.DEBUG = ""
-
 let chai = require('chai')
 let chaiHttp = require('chai-http')
-let server = require('#root/app.js')
+const server = require('#root/app.js')
 chai.use(chaiHttp)
 let should = chai.should()
 

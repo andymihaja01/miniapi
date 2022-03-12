@@ -20,8 +20,8 @@ async function refreshToken(token){
         throw ({invalidToken:true})
     }
     await tokenStoreService.removeToken(userId)
-    const accessToken = generateAccessToken ({user})
-    const refreshToken = generateRefreshToken ({user})
+    const accessToken = generateAccessToken ({username:user.username, id:user.userId})
+    const refreshToken = generateRefreshToken ({username:user.username, id:user.userId})
     return {accessToken,refreshToken}
 }
 

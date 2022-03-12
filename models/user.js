@@ -12,6 +12,9 @@ const UserSchema = mongoose.Schema({
     salt:{
         type:"String",
         required: true
+    },
+    info:{
+        address:String
     }
 })
 

@@ -1,12 +1,12 @@
 const passwordUtils = require("#utils/password.js")
 const jwtUtils = require("#utils/jwt.js")
 const User = require("#models/user.js")
+const userService = require("#services/user.js")
+const { UserNotFoundError, IncorrectPasswordError } = require("#errors/errors.js")
 
 exports.register = async(req,res) => { 
-    const {username, password} = req.body
-    const {passwordHash, salt} = passwordUtils.saltHash(password)
-    const user = new User({username, passwordHash, salt})
-    await user.save()
+    const {username, password, info} = req.body
+    let user = await userService.createUser(username, password, info)
     res.status(201).send(user)
 }
 
@@ -25,18 +25,17 @@ exports.refreshToken = (req,res) => {
 }
 
 exports.login = async(req,res) => {
-    const user = await User.findOne({username:req.body.username}).exec()
-
-    if(user == null) {
-        res.status(404).send("User does not exist!")
-    } else {
-        let providedPassword = req.body.password
-        if(passwordUtils.testPassword(providedPassword, user.passwordHash, user.salt)){
-            const accessToken = jwtUtils.generateAccessToken ({user:user.username})
-            const refreshToken = jwtUtils.generateRefreshToken ({user:user.username})
-            res.send({accessToken: accessToken, refreshToken: refreshToken})
+    try{
+        const {username, password} = req.body
+        const tokens = await userService.login(username, password)
+        res.status(200).send(tokens)
+    } catch(error){
+        if(error instanceof UserNotFoundError){
+            res.status(404).send(error.message)
+        } else if(error instanceof IncorrectPasswordError){
+            res.status(401).send(error.message)
         } else {
-            res.status(401).send("Password Incorrect!")
+            res.status(500).send({message:"An error occured", error})
         }
     }
 }

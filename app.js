@@ -5,7 +5,6 @@ const { DATABASE_URL , PORT, NODE_ENV} = require("./config")
 const app = express()
 const routes = require("./routes")
 const debug = require("debug")("server")
-
 app.use(express.json())
 
 if(NODE_ENV !== "test"){
@@ -24,5 +23,19 @@ mongoose.connect(DATABASE_URL, {
 const server = app.listen(PORT, () => {
     debug(`App is listening on port ${PORT}`)
 })
+
+process.on('SIGINT', function() {
+    exitCleanup()
+});
+
+process.on('SIGTERM', function() {
+    exitCleanup()
+});
+
+function exitCleanup(){
+    mongoose.connection.close();
+    server.close();
+
+}
 
 module.exports = server

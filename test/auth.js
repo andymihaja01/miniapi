@@ -1,18 +1,16 @@
-process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'mongodb://localhost:27017/postscrudjwt-test';
-process.env.DEBUG = ""
-
 const sinon = require("sinon");
 const passwordUtil = require("#utils/password.js")
 const jwt = require("jsonwebtoken")
 const { faker } = require('@faker-js/faker');
 const tokenRepository = require("#repositories/tokenRepository.js")
 const tokenService = require("#services/token.js")
+const userService = require("#services/user.js")
+const userRepository = require("#repositories/userRepository.js")
 const jwtUtil = require("#utils/jwt.js")
 let chai = require('chai')
 var chaiAsPromised = require("chai-as-promised");
-let chaiHttp = require('chai-http')
-let server = require('#root/app.js');
+let chaiHttp = require('chai-http');
+const { UserNotFoundError, IncorrectPasswordError } = require("#errors/errors.js");
 chai.use(chaiHttp)
 chai.use(chaiAsPromised);
 let should = chai.should()
@@ -159,13 +157,13 @@ describe('Auth test', () => {
             const tokenServiceStoreStub = sinon.stub(tokenService, "storeToken").returns(true)
             let refreshToken = await jwtUtil.generateRefreshToken(randomUser)
             tokenServiceStoreStub.calledOnce.should.be.true
-            jwtUtil.refreshToken(refreshToken).should.be.rejected
+            await jwtUtil.refreshToken(refreshToken).should.be.rejected
             tokenServiceHasStub.calledOnce.should.be.true
             return true
         })
         it("it should not logout with invalid userId", async() => {
             const tokenServiceHasStub = sinon.stub(tokenService, "hasUser").returns(false)
-            jwtUtil.logout(randomUser.id).should.be.rejected
+            await jwtUtil.logout(randomUser.id).should.be.rejected
             tokenServiceHasStub.calledOnce.should.be.true            
             return true
         })
@@ -229,7 +227,127 @@ describe('Auth test', () => {
             hash.passwordHash.should.eql(fakeHash.passwordHash)            
         })  
     })
-
+    describe("User repository", () => {
+        const fakeUser = {
+            id: null,
+            username: faker.name.firstName(),
+            passwordHash: faker.internet.password(),
+            salt: faker.internet.password(),
+            info: { 
+                address: faker.address.streetAddress()
+            }
+        }
+        it("it should create an user", async () => {
+            const user = await userRepository.createUser(fakeUser.username,fakeUser.passwordHash, fakeUser.salt,fakeUser.info)
+            fakeUser.id = String(user._id)
+            user.should.exist
+            user.should.have.property("username")
+            user.username.should.be.eql(fakeUser.username)
+            user.should.have.property("info")
+            user.info.should.have.property("address")
+            user.info.address.should.be.eql(fakeUser.info.address)
+            return true
+        })
+        // TEST WILL FAIL IF RUN WITHOUT CREATE
+        it("it should get an user by username", async () => {
+            const user = await userRepository.getUserByUserName(fakeUser.username)
+            user.should.exist
+            user.should.have.property("username")
+            user.username.should.be.eql(fakeUser.username)
+            user.should.have.property("info")
+            user.info.should.have.property("address")
+            user.info.address.should.be.eql(fakeUser.info.address)
+            return true
+        })
+        // TEST WILL FAIL IF RUN WITHOUT CREATE
+        it("it should get an user by id", async () => {
+            const user = await userRepository.findById(fakeUser.id)
+            user.should.exist
+            user.should.have.property("username")
+            user.username.should.be.eql(fakeUser.username)
+            user.should.have.property("info")
+            user.info.should.have.property("address")
+            user.info.address.should.be.eql(fakeUser.info.address)
+            return true
+        })
+    })
+    describe("User service", () => {
+        it("it should create an user", async () => {
+            const fakeUser = {
+                username: faker.name.firstName(),
+                password: faker.internet.password(),
+                info: { 
+                    address: faker.address.streetAddress
+                }
+            }
+            const userRepositoryCreateStub = sinon.stub(userRepository,"createUser").returns({username: fakeUser.username, info:fakeUser.info})
+            const user = await userService.createUser(fakeUser.username,fakeUser.password,fakeUser.info)
+            userRepositoryCreateStub.calledOnce.should.be.true
+            user.should.exist
+            user.should.have.property("username")
+            user.username.should.be.eql(fakeUser.username)
+            user.should.have.property("info")
+            user.info.should.be.eql(fakeUser.info)
+            return true
+        })
+        it("it should throw if no user is found", async () => {
+            const fakeUser = {
+                _id:faker.datatype.uuid(),
+                username: faker.name.firstName(),
+                info: { 
+                    address: faker.address.streetAddress
+                },
+                passwordHash : faker.internet.password(),
+                salt: faker.internet.password()
+            }
+            const fakePassword = faker.internet.password()
+            const userRepositoryGetByNameStub = sinon.stub(userRepository,"getUserByUserName").returns(null)
+            await userService.login(fakeUser.username,fakePassword).should.be.rejectedWith(UserNotFoundError)
+            userRepositoryGetByNameStub.calledOnce.should.be.true
+            return true
+        })
+        it("it should throw if the password is incorrect", async () => {
+            const fakeUser = {
+                _id:faker.datatype.uuid(),
+                username: faker.name.firstName(),
+                info: { 
+                    address: faker.address.streetAddress
+                },
+                passwordHash : faker.internet.password(),
+                salt: faker.internet.password()
+            }
+            const fakePassword = faker.internet.password()
+            const userRepositoryGetByNameStub = sinon.stub(userRepository,"getUserByUserName").returns(fakeUser)
+            const passwordUtilTestPasswordStub = sinon.stub(passwordUtil,"testPassword").returns(false)
+            await userService.login(fakeUser.username,fakePassword).should.be.rejectedWith(IncorrectPasswordError)
+            userRepositoryGetByNameStub.calledOnce.should.be.true
+            passwordUtilTestPasswordStub.calledOnce.should.be.true
+            return true
+        })
+        it("it should verify login", async () => {
+            const fakeUser = {
+                _id:faker.datatype.uuid(),
+                username: faker.name.firstName(),
+                info: { 
+                    address: faker.address.streetAddress
+                },
+                passwordHash : faker.internet.password(),
+                salt: faker.internet.password()
+            }
+            const fakePassword = faker.internet.password()
+            const userRepositoryGetByNameStub = sinon.stub(userRepository,"getUserByUserName").returns(fakeUser)
+            const passwordUtilTestPasswordStub = sinon.stub(passwordUtil,"testPassword").returns(true)
+            const result = await userService.login(fakeUser.username,fakePassword)
+            result.should.exist
+            result.should.have.property("accessToken")
+            result.accessToken.should.exist
+            result.should.have.property("refreshToken")
+            result.refreshToken.should.exist
+            userRepositoryGetByNameStub.calledOnce.should.be.true
+            passwordUtilTestPasswordStub.calledOnce.should.be.true
+            return true
+        })
+    })
 })
 afterEach(function () {
     sinon.restore();

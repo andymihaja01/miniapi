@@ -3,13 +3,17 @@ process.env.DATABASE_URL = 'mongodb://localhost:27017/postscrudjwt-test';
 process.env.DEBUG = ""
 
 const sinon = require("sinon");
+const jwt = require("jsonwebtoken")
 const { faker } = require('@faker-js/faker');
 const tokenRepository = require("#repositories/tokenRepository.js")
 const tokenService = require("#services/token.js")
+const jwtUtil = require("#utils/jwt.js")
 let chai = require('chai')
+var chaiAsPromised = require("chai-as-promised");
 let chaiHttp = require('chai-http')
 let server = require('#root/app.js');
 chai.use(chaiHttp)
+chai.use(chaiAsPromised);
 let should = chai.should()
 
 
@@ -102,6 +106,66 @@ describe('Auth test', () => {
             const hasToken = await tokenService.hasToken(fakeToken.key, fakeToken.value)
             stub.calledOnce.should.be.true
             hasToken.should.eql(false)
+            return true
+        })
+    })
+    describe('JWT util', async() => {
+        const randomUser = faker.helpers.createCard()
+        randomUser.id = faker.datatype.uuid()
+        const randomJwtReturn = faker.datatype.uuid()
+        it("it should generate an access token", async() => {
+            const stub = sinon.stub(jwt, "sign").returns(randomJwtReturn)
+            let accessToken = jwtUtil.generateAccessToken(randomUser)
+            stub.calledOnce.should.be.true
+            accessToken.should.eql(randomJwtReturn)
+            return true
+        })
+        it("it should generate and store a refresh token", async() => {
+            const stub = sinon.stub(jwt, "sign").returns(randomJwtReturn)
+            const tokenServiceStub = sinon.stub(tokenService, "storeToken").returns({key:"anything", value:"anything"})
+            let refreshToken = jwtUtil.generateRefreshToken(randomUser)
+            stub.calledOnce.should.be.true
+            tokenServiceStub.calledOnce.should.be.true
+            refreshToken.should.eql(randomJwtReturn)
+            return true
+        })
+        it("it should generate new tokens when using refresh token", async() => {
+            const tokenServiceHasStub = sinon.stub(tokenService, "hasToken").returns(true)
+            const tokenServiceRemoveStub = sinon.stub(tokenService, "removeToken").returns(true)
+            const tokenServiceStoreStub = sinon.stub(tokenService, "storeToken").returns(true)
+            let oldRefreshToken = await jwtUtil.generateRefreshToken(randomUser)
+            const result = await jwtUtil.refreshToken(oldRefreshToken)
+            tokenServiceHasStub.calledOnce.should.be.true
+            tokenServiceRemoveStub.calledOnce.should.be.true
+            tokenServiceStoreStub.calledTwice.should.be.true
+            result.should.be.a('object')
+            result.should.have.property("accessToken")
+            result.should.have.property("refreshToken")
+            result.refreshToken.should.not.eql(oldRefreshToken)
+            return true
+        })
+        it("it should logout", async() => {
+            const tokenServiceHasStub = sinon.stub(tokenService, "hasUser").returns(true)
+            const tokenServiceRemoveStub = sinon.stub(tokenService, "removeToken").returns(true)
+            const loggedOut = await jwtUtil.logout(randomUser.id)
+            tokenServiceHasStub.calledOnce.should.be.true
+            tokenServiceRemoveStub.calledOnce.should.be.true
+            loggedOut.should.be.true
+            return true
+        })
+        it("it should not generate refresh token with invalid refresh token", async() => {
+            const tokenServiceHasStub = sinon.stub(tokenService, "hasToken").returns(false)
+            const tokenServiceStoreStub = sinon.stub(tokenService, "storeToken").returns(true)
+            let refreshToken = await jwtUtil.generateRefreshToken(randomUser)
+            tokenServiceStoreStub.calledOnce.should.be.true
+            jwtUtil.refreshToken(refreshToken).should.be.rejected
+            tokenServiceHasStub.calledOnce.should.be.true
+            return true
+        })
+        it("it should not logout with invalid userId", async() => {
+            const tokenServiceHasStub = sinon.stub(tokenService, "hasUser").returns(false)
+            jwtUtil.logout(randomUser.id).should.be.rejected
+            tokenServiceHasStub.calledOnce.should.be.true            
             return true
         })
     })

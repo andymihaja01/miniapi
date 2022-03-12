@@ -42,7 +42,7 @@ exports.login = async(req,res) => {
 }
 
 exports.logout = async  (req,res)=>{
-    await jwtUtils.logout({user:req.user.user})
+    await jwtUtils.logout({user:req.user.id})
     res.status(204).send("Logged out!")
 }
 

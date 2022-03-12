@@ -25,4 +25,18 @@ const server = app.listen(PORT, () => {
     debug(`App is listening on port ${PORT}`)
 })
 
+process.on('SIGINT', function() {
+    exitCleanup()
+});
+
+process.on('SIGTERM', function() {
+    exitCleanup()
+});
+
+function exitCleanup(){
+    mongoose.connection.close();
+    server.close();
+
+}
+
 module.exports = server

@@ -1,13 +1,13 @@
 const crypto = require("crypto")
-function makeSalt(length = 16){
+exports.makeSalt = function(length = 16){
     return crypto.randomBytes(Math.ceil(length/2))
             .toString('hex') 
             .slice(0,length);
 };
-exports.makeSalt = makeSalt
 
 
-function hash (password, salt){
+exports.hash = function(password, salt){
+    console.log("CALLED HASH")
     var hash = crypto.createHmac('sha512', salt);
     hash.update(password);
     var value = hash.digest('hex');
@@ -16,10 +16,9 @@ function hash (password, salt){
         passwordHash:value
     };
 };
-exports.hash = hash
 
 exports.saltHash = function(password){
-    return hash(password,makeSalt()) 
+    return module.exports.hash(password,module.exports.makeSalt()) 
 }
 
 exports.testPassword = function(password, hashedPassword, salt){

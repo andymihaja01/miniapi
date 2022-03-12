@@ -3,6 +3,7 @@ process.env.DATABASE_URL = 'mongodb://localhost:27017/postscrudjwt-test';
 process.env.DEBUG = ""
 
 const sinon = require("sinon");
+const passwordUtil = require("#utils/password.js")
 const jwt = require("jsonwebtoken")
 const { faker } = require('@faker-js/faker');
 const tokenRepository = require("#repositories/tokenRepository.js")
@@ -169,6 +170,66 @@ describe('Auth test', () => {
             return true
         })
     })
+    describe('password util', async() => {
+        const password1 = faker.internet.password()
+        const password2 = faker.internet.password()
+        it("it should generate a salt", () => {
+            const salt = passwordUtil.makeSalt()
+            salt.should.exist
+            salt.should.be.not.empty
+        })
+        it("it should generate a hash", () => {
+            const salt = passwordUtil.makeSalt()
+            const hash = passwordUtil.hash(password1, salt)
+            hash.should.have.property("salt")
+            hash.should.have.property("passwordHash")
+            hash.salt.should.eql(salt)
+            hash.passwordHash.should.exist
+            hash.passwordHash.should.be.not.empty
+
+        })
+        it("it should generate the same hash with the same password and salt", () => {
+            const salt = passwordUtil.makeSalt()
+            const hash1 = passwordUtil.hash(password1, salt)
+            const hash2 = passwordUtil.hash(password1, salt)
+            hash1.salt.should.eql(salt)
+            hash1.salt.should.eql(hash2.salt)
+            hash1.passwordHash.should.eql(hash2.passwordHash)
+        })
+        it("it should generate different hash with the same password and different salt", () => {
+            const salt1 = passwordUtil.makeSalt()
+            const salt2 = passwordUtil.makeSalt()
+            salt1.should.not.eql(salt2)
+            const hash1 = passwordUtil.hash(password1, salt1)
+            const hash2 = passwordUtil.hash(password1, salt2)
+            hash1.salt.should.eql(salt1)
+            hash2.salt.should.eql(salt2)
+            hash1.passwordHash.should.not.eql(hash2.passwordHash)
+        })
+        it("it should generate different hash", () => {
+            const salt1 = passwordUtil.makeSalt()
+            const salt2 = passwordUtil.makeSalt()
+            salt1.should.not.eql(salt2)
+            const hash1 = passwordUtil.hash(password1, salt1)
+            const hash2 = passwordUtil.hash(password2, salt2)
+            hash1.salt.should.eql(salt1)
+            hash2.salt.should.eql(salt2)
+            hash1.passwordHash.should.not.eql(hash2.passwordHash)
+        })
+        it("it should saltHash a password", () => {
+            const fakeHash = { salt:"salt", passwordHash:"passwordHash"}
+            const hashStub = sinon.stub(passwordUtil, "hash").returns(fakeHash)
+            const makeSaltStub = sinon.stub(passwordUtil, "makeSalt").returns("salt")
+            const hash = passwordUtil.saltHash(password1)
+            makeSaltStub.calledOnce.should.be.true
+            hashStub.calledOnce.should.be.true        
+            hash.should.have.property("salt")
+            hash.salt.should.eql(fakeHash.salt)            
+            hash.should.have.property("passwordHash")            
+            hash.passwordHash.should.eql(fakeHash.passwordHash)            
+        })  
+    })
+
 })
 afterEach(function () {
     sinon.restore();

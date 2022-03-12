@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const tokenStoreService = require("#services/tokenStore.js")
+const tokenStoreService = require("#services/token.js")
 
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require("#root/config.js")
 

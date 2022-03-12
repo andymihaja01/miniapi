@@ -5,6 +5,7 @@
             "#controllers/*": ["./controllers/*"],
             "#models/*": ["./models/*"],
             "#routes/*": ["./routes/*"],
+            "#repositories/*": ["./repositories/*"],
             "#utils/*": ["./utils/*"],
             "#middlewares/*": ["./middlewares/*"],
             "#services/*": ["./services/*"],

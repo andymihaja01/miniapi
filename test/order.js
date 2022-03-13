@@ -1,6 +1,3 @@
-process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'mongodb://localhost:27017/miniapi-test';
-process.env.DEBUG = ""
 const mongoose = require("mongoose")
 let chai = require('chai')
 chai.use(require('chai-things'));

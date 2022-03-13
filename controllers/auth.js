@@ -35,7 +35,6 @@ exports.login = async(req,res) => {
         } else if(error instanceof IncorrectPasswordError){
             res.status(401).send(error.message)
         } else {
-            console.log(error)
             res.status(500).send({message:"An error occured", error})
         }
     }
@@ -46,7 +45,6 @@ exports.logout = async  (req,res)=>{
         await userService.logout(req.user._id)
         res.status(204).send("Logged out!")
     } catch(error){
-        console.error(error)
         res.status(500).send(error)
     }
 }

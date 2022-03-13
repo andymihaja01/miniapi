@@ -35,14 +35,20 @@ exports.login = async(req,res) => {
         } else if(error instanceof IncorrectPasswordError){
             res.status(401).send(error.message)
         } else {
+            console.log(error)
             res.status(500).send({message:"An error occured", error})
         }
     }
 }
 
 exports.logout = async  (req,res)=>{
-    await jwtUtils.logout({user:req.user.id})
-    res.status(204).send("Logged out!")
+    try {
+        await userService.logout(req.user._id)
+        res.status(204).send("Logged out!")
+    } catch(error){
+        console.error(error)
+        res.status(500).send(error)
+    }
 }
 
 exports.protected = (req,res) => {

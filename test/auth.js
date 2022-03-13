@@ -110,7 +110,7 @@ describe('Auth test', () => {
     })
     describe('JWT util', async() => {
         const randomUser = faker.helpers.createCard()
-        randomUser.id = faker.datatype.uuid()
+        randomUser._id = faker.datatype.uuid()
         const randomJwtReturn = faker.datatype.uuid()
         it("it should generate an access token", async() => {
             const stub = sinon.stub(jwt, "sign").returns(randomJwtReturn)
@@ -146,7 +146,7 @@ describe('Auth test', () => {
         it("it should logout", async() => {
             const tokenServiceHasStub = sinon.stub(tokenService, "hasUser").returns(true)
             const tokenServiceRemoveStub = sinon.stub(tokenService, "removeToken").returns(true)
-            const loggedOut = await jwtUtil.logout(randomUser.id)
+            const loggedOut = await jwtUtil.logout(randomUser._id)
             tokenServiceHasStub.calledOnce.should.be.true
             tokenServiceRemoveStub.calledOnce.should.be.true
             loggedOut.should.be.true
@@ -163,7 +163,7 @@ describe('Auth test', () => {
         })
         it("it should not logout with invalid userId", async() => {
             const tokenServiceHasStub = sinon.stub(tokenService, "hasUser").returns(false)
-            await jwtUtil.logout(randomUser.id).should.be.rejected
+            await jwtUtil.logout(randomUser._id).should.be.rejected
             tokenServiceHasStub.calledOnce.should.be.true            
             return true
         })
@@ -239,7 +239,7 @@ describe('Auth test', () => {
         }
         it("it should create an user", async () => {
             const user = await userRepository.createUser(fakeUser.username,fakeUser.passwordHash, fakeUser.salt,fakeUser.info)
-            fakeUser.id = String(user._id)
+            fakeUser._id = String(user._id)
             user.should.exist
             user.should.have.property("username")
             user.username.should.be.eql(fakeUser.username)
@@ -261,7 +261,7 @@ describe('Auth test', () => {
         })
         // TEST WILL FAIL IF RUN WITHOUT CREATE
         it("it should get an user by id", async () => {
-            const user = await userRepository.findById(fakeUser.id)
+            const user = await userRepository.findById(fakeUser._id)
             user.should.exist
             user.should.have.property("username")
             user.username.should.be.eql(fakeUser.username)

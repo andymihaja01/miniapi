@@ -21,5 +21,5 @@ exports.saltHash = function(password){
 }
 
 exports.testPassword = function(password, hashedPassword, salt){
-    return hash(password,salt).passwordHash == hashedPassword
+    return module.exports.hash(password,salt).passwordHash == hashedPassword
 }

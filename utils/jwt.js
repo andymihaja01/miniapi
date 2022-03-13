@@ -9,19 +9,19 @@ function generateAccessToken(user) {
 
 function generateRefreshToken(user) {
     const refreshToken = jwt.sign(user, REFRESH_TOKEN_SECRET, {expiresIn: "20m"})
-    tokenStoreService.storeToken(user.id,refreshToken)
+    tokenStoreService.storeToken(user._id,refreshToken)
     return refreshToken
 }
 
 async function refreshToken(token){
     let user = jwt.verify(token, REFRESH_TOKEN_SECRET)
-    let userId =  user.id
+    let userId =  user._id
     if (!await tokenStoreService.hasToken(userId,token)) {
         throw ({invalidToken:true})
     }
     await tokenStoreService.removeToken(userId)
-    const accessToken = generateAccessToken ({username:user.username, id:user.userId})
-    const refreshToken = generateRefreshToken ({username:user.username, id:user.userId})
+    const accessToken = generateAccessToken ({username:user.username, _id:user.userId})
+    const refreshToken = generateRefreshToken ({username:user.username, _id:user.userId})
     return {accessToken,refreshToken}
 }
 

@@ -16,21 +16,34 @@ chai.should()
 
 describe('Product repository test', () => {
     it('it should create a product', async () => {
-            const fakeProduct = {
-                name: "MiniFigure",
-                unitPrice: 12.5,
-                isFigure: true
-            }
-            const product = await ProductRepository.createProduct(fakeProduct)  
-            product.should.have.property("name")
-            product.name.should.eql(fakeProduct.name)
-            product.should.have.property("unitPrice")
-            product.unitPrice.should.eql(fakeProduct.unitPrice)
-            product.should.have.property("isFigure")
-            product.isFigure.should.eql(fakeProduct.isFigure)
-            return true
-        })
+        const fakeProduct = {
+            name: "MiniFigure",
+            unitPrice: 12.5,
+            isFigure: true
+        }
+        const product = await ProductRepository.createProduct(fakeProduct)  
+        product.should.have.property("name")
+        product.name.should.eql(fakeProduct.name)
+        product.should.have.property("unitPrice")
+        product.unitPrice.should.eql(fakeProduct.unitPrice)
+        product.should.have.property("isFigure")
+        product.isFigure.should.eql(fakeProduct.isFigure)
+        return true
     })
+    it('it should get a product by id', async () => {
+        const fakeProduct = {
+            name: "MiniFigure",
+            unitPrice: 12.5,
+            isFigure: true
+        }
+        let newProduct = new Product(fakeProduct)
+        newProduct = await newProduct.save()
+        const product = await ProductRepository.getProductById(String(newProduct._id))  
+        product.should.have.property("_id")
+        product._id.should.eql(String(newProduct._id))
+        return true
+    })
+})
 
 afterEach(function () {
     sinon.restore();

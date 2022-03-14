@@ -2,6 +2,7 @@ const Product = require("#models/product.js")
 const Order = require("#models/order.js")
 const IncorrectOrderError = require('./errors/IncorrectOrderStatusError.js')
 const { default: mongoose } = require("mongoose")
+const ObjectId = mongoose.Types.ObjectId
 const {cleanOrder} = require("#repositories/utils/modelCleaner.js")
 const product = require("#models/product.js")
 /**
@@ -29,7 +30,8 @@ const product = require("#models/product.js")
  */
 async function createOrder(order){
     checkOrderStatus(order.status)
-    const correctOrder = stripOrder(order)
+    const strippedOrder = stripOrder(order)
+    const correctOrder = fixOrderIds(strippedOrder)
     const orderToSave = new Order(correctOrder)
     const savedOrder = await orderToSave.save()
     const orderObject = await cleanOrder(savedOrder)
@@ -55,11 +57,27 @@ async function getOrderById(orderId){
 async function updateOrderById(orderId, orderData){
     const existingOrder = await getOrderById(orderId)
     const updatedOrder = stripOrder(orderData)
-    checkOrderStatus(updatedOrder)
+    checkOrderStatus(updatedOrder.status)
     updatedOrder.orderDate = existingOrder.orderDate
-    const orderToSave = new Order(updatedOrder)
-    const savedOrder = await orderToSave.save()
-    return savedOrder
+    const correctOrder = fixOrderIds(updatedOrder)
+    const savedOrder = await ( new Promise((resolve,reject ) => {
+        Order.findOneAndReplace({_id:ObjectId(existingOrder._id)},correctOrder,{returnDocument :'after'}, (err,doc) => {
+            if(err){
+                reject(err)
+            } else {
+                resolve(doc)
+            }
+        })
+    }))
+    const cleanedSavedOrder = cleanOrder(savedOrder)
+    return cleanedSavedOrder
+}
+
+function fixOrderIds(order){
+    order.products.forEach((product) => {
+        product.productId = ObjectId(product.productId)
+    })
+    return order
 }
 
 /**
@@ -78,7 +96,7 @@ function stripOrder(order, updateDate = true){
         products:[]
     }
     if(updateDate){
-        strippedOrder.orderDate = order.date
+        strippedOrder.orderDate = order.orderDate
     }
     order.products.forEach((product) => {
         const currentProduct = {
@@ -99,10 +117,13 @@ function checkOrderStatus(status){
     if(!validStatuses.includes(status)){
         throw new IncorrectOrderError(status)
     }
+    return status
 }
 
 module.exports = {
     createOrder,
     getOrderById,
-    updateOrderById
+    updateOrderById,
+    fixOrderIds,
+    checkOrderStatus
 }

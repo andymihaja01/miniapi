@@ -17,11 +17,16 @@ exports.cleanModel = function(model){
  */
  exports.cleanOrder = function(order){
     if(order.toObject != undefined){
-        const orderObject = model.toObject()
+        const orderObject = order.toObject()
+        if(order.customer){
+            orderObject.customer = String(orderObject.customer)
+        }
         orderObject._id = String(orderObject._id)
         orderObject.products.forEach((product) => {
-            product._id = String(product._id) 
+            product.productId = String(product.productId)
+            delete product._id
         });
+        orderObject.orderDate = new Date(order.orderDate)
         return orderObject
     }
     return order

@@ -6,7 +6,7 @@ const OrderSchema = Schema({
         type: ObjectId, ref: 'Users'
     },
     products:[{
-        productId: ObjectId, ref: 'Products',
+        productId: {type: ObjectId, ref: 'Products'},
         serialNumber: String,
         isFigure:{
             type:Boolean,

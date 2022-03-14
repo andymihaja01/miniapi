@@ -19,7 +19,22 @@ class IncorrectPasswordError extends CustomError{
     }
 }
 
+class InvalidOrderError extends CustomError{
+    constructor(){
+        super("Something is wrong with the provided order.")
+    }
+}
+
+class ProductNotFoundError extends CustomError{
+    constructor(productId){
+        super(`Cant't find product with id ${productId}`)
+    }
+}
+
+
 module.exports = {
     UserNotFoundError,
-    IncorrectPasswordError
+    IncorrectPasswordError,
+    ProductNotFoundError,
+    InvalidOrderError
 }

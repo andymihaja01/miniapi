@@ -7,19 +7,9 @@ class CustomError extends Error{
 }
 
 class UserNotFoundError extends CustomError{
-    constructor(){
-        super("User was not found.")
+    constructor(status){
+        super(`Incorrect Order Status, found ${status} instead of 'QUEUD' | 'IN PROGRESS' | 'READY FOR DELIVERY'`)
     }
 }
 
-
-class IncorrectPasswordError extends CustomError{
-    constructor(){
-        super("Incorrect password.")
-    }
-}
-
-module.exports = {
-    UserNotFoundError,
-    IncorrectPasswordError
-}
+module.exports = UserNotFoundError

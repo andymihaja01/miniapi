@@ -3,4 +3,5 @@
  */
 process.env.NODE_ENV = 'test';
 process.env.DEBUG = ""
+require("#root/testHelpers/fakeAuthMiddleware.js")
 require("#root/testHelpers/connect.js")

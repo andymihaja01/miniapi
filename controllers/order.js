@@ -1,10 +1,12 @@
 const debug = require("debug")("order")
+const OrderService = require("#services/order.js")
 
 exports.createOrder = async(req,res) => {
     let order = req.order
     debug(`Received order:`)
     debug(order)
-    res.send(order)
+    const createdOrder = await OrderService.createOrder(order)
+    res.send(createdOrder)
 }
 
 exports.notifyOrderReady = async(req,res) => {

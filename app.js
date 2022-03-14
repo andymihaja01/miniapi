@@ -10,7 +10,6 @@ singleConnectionInstance.connect().then(() => {
     debug("Database connected!")
 })
 if(NODE_ENV !== "test"){
-    console.log("LALALALALALALALALALALALALALAALALALALALALAALALALALALALAAL")
     app.use(morgan('tiny'));
 }
 

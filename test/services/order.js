@@ -1,6 +1,4 @@
 const sinon = require("sinon");
-const mongoose = require("mongoose")
-const ObjectId = mongoose.Types.ObjectId
 const chai = require('chai')
 const chaiAsPromised = require("chai-as-promised");
 const chaiHttp = require('chai-http')
@@ -194,6 +192,81 @@ describe('Order service test', () => {
         const order = await OrderService.updateOrder(String(fakeOrder._id), updatedFakeOrder)
         orderFindStub.calledOnce.should.be.true
         orderRepositoryUpdateStub.calledOnce.should.be.true
+        order.should.exist
+        order.should.eql(updatedFakeOrder)
+        return true
+    })
+    it('it should update an order products serial numbers and status by id', async () => {
+        const fakeUser = {
+            username:faker.name.firstName(),
+            salt:faker.internet.password(),
+            passwordHash:faker.internet.password()
+            
+        }
+        const fakeProduct = {
+            name: "MiniFigure",
+            unitPrice: 12.5,
+            isFigure: true
+        }
+        const nowDate = new Date(Date.now())
+        const fakeOrder = {
+            _id:"testorder",
+            customer: String(fakeUser._id),
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:null,
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+            discount:0.1,
+            shippingInfo:{
+                address:"new york"
+            },
+            status:'QUEUED',
+            orderDate: nowDate
+        }
+        const updateRequest = {
+            _id:"testorder",
+            status:'IN PROGRESS',
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:"NEW SN",
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+        } 
+        const updatedFakeOrder = {
+            _id:"testorder",
+            customer: String(fakeUser._id),
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:"NEW SN",
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+            discount:0.1,
+            shippingInfo:{
+                address:"new york"
+            },
+            status:'IN PROGRESS',
+            orderDate: nowDate
+        }
+        const orderFindStub = sinon.stub(OrderRepository, "getOrderById").returns(fakeOrder)
+        const orderServiceUpdateByIdStub = sinon.stub(OrderService, "updateOrder").returns(updatedFakeOrder) 
+        const order = await OrderService.updateSerialNumbersAndStatus(String(fakeOrder._id), updateRequest)
+        orderFindStub.calledOnce.should.be.true
+        orderServiceUpdateByIdStub.calledOnce.should.be.true
+        orderServiceUpdateByIdStub.getCall(0).args[0].should.eql(String(fakeOrder._id))
+        orderServiceUpdateByIdStub.getCall(0).args[1].should.eql(updatedFakeOrder)
         order.should.exist
         order.should.eql(updatedFakeOrder)
         return true

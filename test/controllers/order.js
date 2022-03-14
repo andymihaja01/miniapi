@@ -81,7 +81,33 @@ describe('Order test', () => {
                     }
                 ]
             }
+            const fakeProduct = {
+                name: "MiniFigure",
+                unitPrice: 12.5,
+                isFigure: true
+            }
+            const nowDate = new Date(Date.now())
+            const updatedFakeOrder = {
+                _id:"testorder",
+                customer: String(fakedMiddlewareUser._id),
+                products: [
+                    {
+                        productId:String(fakeProduct._id),
+                        serialNumber:"NEW SN",
+                        isFigure:fakeProduct.isFigure,
+                        originalUnitPrice: fakeProduct.unitPrice,
+                        finalUnitPrice: fakeProduct.unitPrice,
+                    }
+                ],
+                discount:0.1,
+                shippingInfo:{
+                    address:"new york"
+                },
+                status:'IN PROGRESS',
+                orderDate: nowDate
+            }
             const orderCreateStub = sinon.stub(OrderService,"createOrder").returns(fakeOrderFull)
+            const orderUpdateSerialStub = sinon.stub(OrderService,"updateSerialNumbersAndStatus").returns(updatedFakeOrder)
             chai.request(server)
               .post('/order/createOrder')
               .send(fakeOrder)
@@ -90,6 +116,8 @@ describe('Order test', () => {
                     res.body.should.be.a('object')
                     res.body.should.eql(fakeOrderFull)
                     orderCreateStub.calledOnce.should.be.true
+                    orderCreateStub.restore()
+                    orderUpdateSerialStub.restore()
                     done();
               });
         })

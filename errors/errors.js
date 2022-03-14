@@ -31,10 +31,17 @@ class ProductNotFoundError extends CustomError{
     }
 }
 
+class MissingProductError extends CustomError{
+    constructor(productId){
+        super(`The product ${productId} was not assigned a serial number.`)
+    }
+}
+
 
 module.exports = {
     UserNotFoundError,
     IncorrectPasswordError,
     ProductNotFoundError,
-    InvalidOrderError
+    InvalidOrderError,
+    MissingProductError
 }

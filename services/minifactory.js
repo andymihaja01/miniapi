@@ -1,12 +1,12 @@
 const axios = require('axios')
-const { FACTORY_URL} = require("./config")
+const { FACTORY_URL} = require("#root/config.js")
 
-export function queueOrder(order){
+exports.queueOrder = function(order){
     return new Promise((resolve, reject) => {
         axios
         .post(`${FACTORY_URL}/order/queueOrder`, order)
         .then(res => {
-            resolve(res.data)
+            resolve(res)
         })
         .catch(error => {
             reject(error)

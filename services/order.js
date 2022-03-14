@@ -84,3 +84,23 @@ exports.createOrder = async function(order, userId){
     const updatedOrder = await OrderRepository.updateOrderById(orderId, orderData)
     return updatedOrder
 }
+
+exports.updateSerialNumbersAndStatus = async function(orderId, orderData){
+    const order = await OrderRepository.getOrderById(orderId)
+    order.products.forEach((product,k) => {
+        if(orderData.products[k].productId == product.productId){
+            product.serialNumber = orderData.products[k].serialNumber
+        } else {
+            // In case the order of the products is not the same
+            const disorderedProduct = orderData.products.find((dataProduct) => dataProduct.productId == product.productId)
+            if(disorderedProduct !== undefined){
+                product.serialNumber = disorderedProduct.serialNumber
+            } else {
+                throw new MissingProductError(product.productId)
+            }
+        }
+    })
+    order.status = orderData.status
+    const updatedOrder = await module.exports.updateOrder(orderId,order)
+    return updatedOrder
+}

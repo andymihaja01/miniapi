@@ -3,11 +3,11 @@ const { default: mongoose } = require("mongoose")
 const {cleanModel} = require("#repositories/utils/modelCleaner.js")
 /**
  * Creates and saves a product to database
- * @param {{name:String, unitPrice:Number, isFigure:Boolean}} product 
+ * @param {{name:String, unitPrice:Number, isFigure:Boolean, isFamilyPack:Boolean}} product 
  * @returns 
  */
 async function createProduct(product){
-    const productToSave = new Product({name:product.name, unitPrice:product.unitPrice, isFigure:product.isFigure})  
+    const productToSave = new Product({name:product.name, unitPrice:product.unitPrice, isFigure:product.isFigure, isFamilyPack:product.isFamilyPack})  
     await productToSave.save()
     const productObject =  cleanModel(productToSave)
     return productObject

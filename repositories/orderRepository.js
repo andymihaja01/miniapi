@@ -10,6 +10,7 @@ const product = require("#models/product.js")
  * @property {String} productId - The id of the product
  * @property {String} serialNumber - The serial number if there is any
  * @property {Boolean} isFigure - If it is a figure
+ * @property {Boolean} isFamilyPack - If it is a family pack
  * @property {Number} originalUnitPrice - The original price associated with the product
  * @property {Number} finalUnitPrice - The price at which it is bought
  */
@@ -112,6 +113,7 @@ function stripOrder(order, updateDate = true){
             productId : product.productId,
             serialNumber : product.serialNumber,
             isFigure : product.isFigure,
+            sFamilyPack : product.isFamilyPack,
             originalUnitPrice : product.originalUnitPrice,
             finalUnitPrice : product.finalUnitPrice,
             quantity : product.quantity

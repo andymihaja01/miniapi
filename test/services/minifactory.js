@@ -19,6 +19,7 @@ describe("MiNiFactory Service test", () => {
                     {
                         productId:"asd",
                         isFigure:true,
+                        isFamilyPack:false,
                         serialNumber:null
                     }
                  ]
@@ -30,6 +31,7 @@ describe("MiNiFactory Service test", () => {
               {
                 "productId": "asd",
                 "isFigure": true,
+                "isFamilyPack":false,
                 "serialNumber": "84d020b7706bbcd7efaca1848ae17a0a3d8d277a45a0ec9bbdfb9df0e516abd6728c3328eeb22715a7f0383e9cf00a1926d3a2bbceafa40b24e6b142970e0e6a"
               }
             ],

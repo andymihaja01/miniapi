@@ -19,7 +19,8 @@ describe('Product service test', () => {
         const fakeProduct = {
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const productRepositoryCreateStub = sinon.stub(ProductRepository,"createProduct").returnsArg(0)
         const savedProduct = await ProductService.createProduct(fakeProduct)
@@ -30,6 +31,8 @@ describe('Product service test', () => {
         savedProduct.unitPrice.should.eql(fakeProduct.unitPrice)
         savedProduct.should.have.property('isFigure')
         savedProduct.isFigure.should.eql(fakeProduct.isFigure)
+        savedProduct.should.have.property('isFamilyPack')
+        savedProduct.isFamilyPack.should.eql(fakeProduct.isFamilyPack)
         return true
     })
     it('it should get a product by id', async () => {
@@ -37,7 +40,8 @@ describe('Product service test', () => {
             _id: "test",
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const productRepositoryGetByIdStub = sinon.stub(ProductRepository, "getProductById").returns(fakeProduct)
         const product = await ProductService.getProductById("test")  
@@ -50,6 +54,8 @@ describe('Product service test', () => {
         product.unitPrice.should.eql(fakeProduct.unitPrice)
         product.should.have.property('isFigure')
         product.isFigure.should.eql(fakeProduct.isFigure)
+        product.should.have.property('isFamilyPack')
+        product.isFamilyPack.should.eql(fakeProduct.isFamilyPack)
         return true
     })
 })

@@ -19,7 +19,8 @@ describe('Product repository test', () => {
         const fakeProduct = {
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const product = await ProductRepository.createProduct(fakeProduct)  
         product.should.have.property("name")
@@ -28,13 +29,16 @@ describe('Product repository test', () => {
         product.unitPrice.should.eql(fakeProduct.unitPrice)
         product.should.have.property("isFigure")
         product.isFigure.should.eql(fakeProduct.isFigure)
+        product.should.have.property("isFamilyPack")
+        product.isFamilyPack.should.eql(fakeProduct.isFamilyPack)
         return true
     })
     it('it should get a product by id', async () => {
         const fakeProduct = {
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         let newProduct = new Product(fakeProduct)
         newProduct = await newProduct.save()

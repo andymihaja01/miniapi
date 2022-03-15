@@ -18,6 +18,7 @@ const UserRepository = require("#repositories/userRepository.js")
  * @property {String} productId - The id of the product
  * @property {String} serialNumber - The serial number if there is any
  * @property {Boolean} isFigure - If it is a figure
+ * @property {Boolean} isFamilyPack - If it is a family pack
  * @property {Number} originalUnitPrice - The original price associated with the product
  * @property {Number} finalUnitPrice - The price at which it is bought
  */
@@ -59,6 +60,7 @@ exports.createOrder = async function(order, userId){
                     }
                     product.serialNumber = null
                     product.isFigure = foundProduct.isFigure
+                    product.isFamilyPack = foundProduct.isFamilyPack
                     product.originalUnitPrice = foundProduct.unitPrice
                     product.finalUnitPrice = foundProduct.unitPrice
                     resolve(true)
@@ -108,4 +110,10 @@ exports.updateSerialNumbersAndStatus = async function(orderId, orderData){
 exports.updateOrderStatusById = async function(orderId, status){
     const updatedOrder = await OrderRepository.updateOrderStatusById(orderId, status)
     return updatedOrder
+}
+
+exports.applyDiscounts = async function(orderId){
+    const order = await OrderRepository.getOrderById(orderId)
+    // Discount if it contains "MiNi Family pack"
+    
 }

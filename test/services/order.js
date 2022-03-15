@@ -30,7 +30,8 @@ describe('Order service test', () => {
             _id: "testProduct",
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const fakeOrder = {
             products: []
@@ -53,7 +54,8 @@ describe('Order service test', () => {
             _id: "testProduct",
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const fakeOrder = {
             products: []
@@ -76,7 +78,8 @@ describe('Order service test', () => {
             _id: "testProduct",
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack:false,
         }
         const fakeOrder = {
             products: [
@@ -103,7 +106,8 @@ describe('Order service test', () => {
             _id: "testProduct",
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const fakeOrder = {
             products: [
@@ -131,6 +135,8 @@ describe('Order service test', () => {
         should.not.exist(savedOrder.products[0].serialNumber)
         savedOrder.products[0].should.have.property("isFigure")
         savedOrder.products[0].isFigure.should.eql(fakeProduct.isFigure)
+        savedOrder.products[0].should.have.property("isFamilyPack")
+        savedOrder.products[0].isFamilyPack.should.eql(fakeProduct.isFamilyPack)
         savedOrder.products[0].should.have.property("originalUnitPrice")
         savedOrder.products[0].originalUnitPrice.should.eql(fakeProduct.unitPrice)
         savedOrder.products[0].should.have.property("finalUnitPrice")
@@ -148,7 +154,8 @@ describe('Order service test', () => {
         const fakeProduct = {
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -158,6 +165,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -176,6 +184,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice + 20,
                 }
@@ -206,7 +215,8 @@ describe('Order service test', () => {
         const fakeProduct = {
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -217,6 +227,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -236,6 +247,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -249,6 +261,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -281,7 +294,8 @@ describe('Order service test', () => {
         const fakeProduct = {
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -292,6 +306,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -311,6 +326,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -330,6 +346,7 @@ describe('Order service test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }

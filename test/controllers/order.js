@@ -84,7 +84,8 @@ describe('Order controller routes test', () => {
             const fakeProduct = {
                 name: "MiniFigure",
                 unitPrice: 12.5,
-                isFigure: true
+                isFigure: true,
+                isFamilyPack: false
             }
             const nowDate = new Date(Date.now())
             const updatedFakeOrder = {
@@ -95,6 +96,7 @@ describe('Order controller routes test', () => {
                         productId:String(fakeProduct._id),
                         serialNumber:"NEW SN",
                         isFigure:fakeProduct.isFigure,
+                        isFamilyPack:fakeProduct.isFamilyPack,
                         originalUnitPrice: fakeProduct.unitPrice,
                         finalUnitPrice: fakeProduct.unitPrice,
                     }

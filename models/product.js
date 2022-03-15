@@ -5,6 +5,10 @@ const ProductSchema = mongoose.Schema({
     isFigure:{
         type:Boolean,
         default:false
+    },
+    isFamilyPack:{
+        type:Boolean,
+        default:false
     }
 })
 

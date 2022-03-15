@@ -44,7 +44,8 @@ describe('Order repository test', () => {
         const fakeProduct = await new Product({
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false
         }).save()
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -54,6 +55,7 @@ describe('Order repository test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -89,7 +91,8 @@ describe('Order repository test', () => {
         const fakeProduct = await new Product({
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }).save()
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -99,6 +102,7 @@ describe('Order repository test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -128,7 +132,8 @@ describe('Order repository test', () => {
         const fakeProduct = await new Product({
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false,
         }).save()
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -138,6 +143,7 @@ describe('Order repository test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }
@@ -157,6 +163,7 @@ describe('Order repository test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice + 20,
                 }
@@ -185,7 +192,8 @@ describe('Order repository test', () => {
         const fakeProduct = await new Product({
             name: "MiniFigure",
             unitPrice: 12.5,
-            isFigure: true
+            isFigure: true,
+            isFamilyPack: false
         }).save()
         const nowDate = new Date(Date.now())
         const fakeOrder = {
@@ -195,6 +203,7 @@ describe('Order repository test', () => {
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
+                    isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
                 }

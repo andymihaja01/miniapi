@@ -12,6 +12,10 @@ const OrderSchema = Schema({
             type:Boolean,
             default:false
         },
+        isFamilyPack:{
+            type:Boolean,
+            default:false
+        },
         originalUnitPrice: Number,
         finalUnitPrice: Number,
         quantity: Number,
@@ -28,6 +32,7 @@ const OrderSchema = Schema({
         enum:['QUEUED','IN PROGRESS','READY FOR DELIVERY'],
         default:'QUEUED'
     },
+    finalPrice: Number,
     orderDate: Date
 })
 

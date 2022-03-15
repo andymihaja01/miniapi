@@ -101,7 +101,7 @@ function stripOrder(order, updateDate = true){
         customer : order.customer,
         discount : order.discount,
         shippingInfo : {
-            address: order.shippingInfo.address
+            address: order?.shippingInfo?.address
         },
         status: order.status,
         miniFigureOverallDiscount: order.miniFigureOverallDiscount || false,

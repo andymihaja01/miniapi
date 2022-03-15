@@ -29,7 +29,6 @@ class SingleConnection{
                     useUnifiedTopology: true
                 }).then(() => {
                     resolve(true)
-                    console.log(`Connected to database at ${urlToConnectTo}`)
                 }).catch((error) => reject(error))
             })
             return this.connectPromise

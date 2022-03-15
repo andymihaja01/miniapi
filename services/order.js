@@ -43,11 +43,12 @@ exports.createOrder = async function(order, userId){
         if(user == null){
             throw new UserNotFoundError()
         }
+        order = JSON.parse(JSON.stringify(order))
 
         if(!order.products || !order.products.length>0){
           throw new InvalidOrderError()
         }
-
+        order.status = 'QUEUED'
         order.customer = userId
         order.discount = 0
         order.orderDate = new Date(Date.now())
@@ -85,7 +86,7 @@ exports.createOrder = async function(order, userId){
  exports.updateOrder = async function(orderId, orderData){
     // do not alter original object
     orderData = JSON.parse(JSON.stringify(orderData))
-    const order = OrderRepository.getOrderById(orderId)
+    const order = await OrderRepository.getOrderById(orderId)
     orderData.customer = order.customer
     await module.exports.applyDiscounts(orderData)
     const updatedOrder = await OrderRepository.updateOrderById(orderId, orderData)
@@ -167,7 +168,7 @@ exports.applyDiscounts = async function(order){
 
 function computeFinalPrice(order){
     const total = order.products.reduce((acc, product) => acc + (product.finalUnitPrice * product.quantity),0)
-    const discountedTotal = total * (1-order.discount);
+    const discountedTotal = total * (1-order.discount||0);
     return discountedTotal
 }
 exports.computeFinalPrice = computeFinalPrice 

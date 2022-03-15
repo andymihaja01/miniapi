@@ -3,17 +3,28 @@ const OrderService = require("#services/order.js")
 const MinifactoryService = require("#services/minifactory.js")
 const IncorrectOrderStatusError = require("#repositories/errors/IncorrectOrderStatusError.js")
 exports.createOrder = async(req,res) => {
-    let order = req.order
-    debug(`Received order:`)
-    debug(order)
-    const createdOrder = await OrderService.createOrder(order)
-    debug(`Order ${createdOrder._id} saved!`)
-    MinifactoryService.queueOrder(createdOrder).then(async (queuedOrder) => {
-        debug(`Order queued`)
-        const updatedOrder = await OrderService.updateSerialNumbersAndStatus(createdOrder._id, queuedOrder)    
-        debug(updatedOrder)
-    })
-    res.send(createdOrder)
+    try{
+
+        let order = req.order
+        debug(`Received order:`)
+        debug(order)
+        const createdOrder = await OrderService.createOrder(order,req.user._id)
+        debug(`Order ${createdOrder._id} saved!`)
+        res.send(createdOrder)
+        MinifactoryService.queueOrder(createdOrder).then(async (queuedOrder) => {
+            debug(`Order queued`)
+            try {
+                const updatedOrder = await OrderService.updateSerialNumbersAndStatus(createdOrder._id, queuedOrder)    
+                debug(updatedOrder)
+            } catch (error){
+                console.error(error)
+            }
+
+        })
+        
+    } catch (error) {
+        res.status(500).send(error)
+    }
 }
 
 exports.notifyOrderStatus = async(req,res) => {

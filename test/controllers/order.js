@@ -17,6 +17,7 @@ describe('Order controller routes test', () => {
         it("it should not create an empty order",  (done) => {
             let order = {
             }
+            useMiddlewareStub()
             chai.request(server)
               .post('/order/createOrder')
               .send(order)
@@ -34,6 +35,7 @@ describe('Order controller routes test', () => {
                 products: [
                 ]
             }
+            useMiddlewareStub()
             chai.request(server)
               .post('/order/createOrder')
               .send(fakeOrder)
@@ -78,6 +80,7 @@ describe('Order controller routes test', () => {
                 customer:fakedMiddlewareUser._id,
                 products: [
                     {
+                        quantity: 1,
                         productId:"fake product id",
                     }
                 ]
@@ -109,6 +112,7 @@ describe('Order controller routes test', () => {
                 status:'IN PROGRESS',
                 orderDate: nowDate
             }
+            useMiddlewareStub()
             const orderCreateStub = sinon.stub(OrderService,"createOrder").returns(fakeOrderFull)
             const minifactoryQueueStub = sinon.stub(MinifactoryService,"queueOrder").resolves({})
             const orderUpdateSerialStub = sinon.stub(OrderService,"updateSerialNumbersAndStatus").returns(updatedFakeOrder)

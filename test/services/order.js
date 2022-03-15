@@ -114,6 +114,7 @@ describe('Order service test', () => {
             products: [
                 {
                     productId:String(fakeProduct._id),
+                    quantity:1
                 }
             ]
         }
@@ -171,6 +172,7 @@ describe('Order service test', () => {
                     isFamilyPack:fakeProduct.isFamilyPack,
                     originalUnitPrice: fakeProduct.unitPrice,
                     finalUnitPrice: fakeProduct.unitPrice,
+                    quantity:1
                 }
             ],
             discount:0,
@@ -184,6 +186,7 @@ describe('Order service test', () => {
             customer: String(fakeUser._id),
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
@@ -229,6 +232,7 @@ describe('Order service test', () => {
             customer: String(fakeUser._id),
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
@@ -249,6 +253,7 @@ describe('Order service test', () => {
             status:'IN PROGRESS',
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
@@ -263,6 +268,7 @@ describe('Order service test', () => {
             customer: String(fakeUser._id),
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
@@ -308,6 +314,7 @@ describe('Order service test', () => {
             customer: String(fakeUser._id),
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:null,
                     isFigure:fakeProduct.isFigure,
@@ -328,6 +335,7 @@ describe('Order service test', () => {
             customer: String(fakeUser._id),
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,
@@ -348,6 +356,7 @@ describe('Order service test', () => {
             customer: String(fakeUser._id),
             products: [
                 {
+                    quantity:1,
                     productId:String(fakeProduct._id),
                     serialNumber:"NEW SN",
                     isFigure:fakeProduct.isFigure,

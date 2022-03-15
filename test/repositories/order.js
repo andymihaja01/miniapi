@@ -112,7 +112,8 @@ describe('Order repository test', () => {
                 address:"new york"
             },
             status:'QUEUED',
-            orderDate: nowDate
+            orderDate: nowDate,
+            miniFigureOverallDiscount:false,
         }
         const savedOrder = await new Order(fakeOrder).save()  
         const order = await OrderRepository.getOrderById(String(savedOrder._id))
@@ -173,6 +174,7 @@ describe('Order repository test', () => {
                 address:"new york"
             },
             status:'IN PROGRESS',
+            miniFigureOverallDiscount:false,
             orderDate: nowDate
         }
         const order = await OrderRepository.updateOrderById(String(savedOrder._id), updatedFakeOrder)

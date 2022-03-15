@@ -19,6 +19,7 @@ const product = require("#models/product.js")
  * @property {String} customer - The customerId
  * @property {Product} products - The order items
  * @property {Number} discount - The discount percentage if any
+ * @property {Number} finalPrice - The final price
  * @property {{address:String}} shippingInfo
  * @property {String:'QUEUED'|'IN PROGRESS'|'READY FOR DELIVERY'} status - The order status
  * @property {Date} orderDate - The date at which the order was created
@@ -103,6 +104,8 @@ function stripOrder(order, updateDate = true){
             address: order.shippingInfo.address
         },
         status: order.status,
+        miniFigureOverallDiscount: order.miniFigureOverallDiscount || false,
+        finalPrice: order.finalPrice,
         products:[]
     }
     if(updateDate){
@@ -113,7 +116,7 @@ function stripOrder(order, updateDate = true){
             productId : product.productId,
             serialNumber : product.serialNumber,
             isFigure : product.isFigure,
-            sFamilyPack : product.isFamilyPack,
+            isFamilyPack : product.isFamilyPack,
             originalUnitPrice : product.originalUnitPrice,
             finalUnitPrice : product.finalUnitPrice,
             quantity : product.quantity

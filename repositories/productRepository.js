@@ -24,8 +24,21 @@ async function getProductById(productId){
     return productObject
 }
 
+/**
+ * Finds all products with ids
+ * @param {[String]} productIds 
+ * @returns 
+ */
+ async function getProductsInList(productIds){
+    const list = productIds.map((p) => mongoose.Types.ObjectId(p)) 
+    const products = await Product.find({_id: { $in: list}}).exec()
+    const productsObjects = products.map((p) => cleanModel(p))
+    return productsObjects
+}
+
 
 module.exports = {
     createProduct,
-    getProductById
+    getProductById,
+    getProductsInList
 }

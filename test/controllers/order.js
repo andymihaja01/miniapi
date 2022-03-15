@@ -4,6 +4,7 @@ const sinon = require("sinon")
 chai.use(require('chai-things'));
 const {useMiddlewareStub, fakedMiddlewareUser, restoreMiddlewareStub} = require("#root/testHelpers/fakeAuthMiddleware.js") 
 const OrderService = require("#services/order.js")
+const MinifactoryService = require("#services/minifactory.js")
 let chaiHttp = require('chai-http')
 let server = require('#root/app.js')
 chai.use(chaiHttp)
@@ -109,6 +110,7 @@ describe('Order controller routes test', () => {
                 orderDate: nowDate
             }
             const orderCreateStub = sinon.stub(OrderService,"createOrder").returns(fakeOrderFull)
+            const minifactoryQueueStub = sinon.stub(MinifactoryService,"queueOrder").resolves({})
             const orderUpdateSerialStub = sinon.stub(OrderService,"updateSerialNumbersAndStatus").returns(updatedFakeOrder)
             chai.request(server)
               .post('/order/createOrder')
@@ -118,6 +120,9 @@ describe('Order controller routes test', () => {
                     res.body.should.be.a('object')
                     res.body.should.eql(fakeOrderFull)
                     orderCreateStub.calledOnce.should.be.true
+                    minifactoryQueueStub.calledOnce.should.be.true
+                    orderUpdateSerialStub.calledOnce.should.be.true
+                    minifactoryQueueStub.restore()
                     orderCreateStub.restore()
                     orderUpdateSerialStub.restore()
                     done();

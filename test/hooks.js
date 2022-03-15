@@ -13,7 +13,6 @@ exports.mochaHooks = {
         
     },
     afterAll(done)  {
-        console.log("AFTER ALL")
         //connection needs to be closed to avoid mocha hanging on
         mongoose.connection.close(done);
     }

@@ -32,6 +32,10 @@ const OrderSchema = Schema({
         enum:['QUEUED','IN PROGRESS','READY FOR DELIVERY'],
         default:'QUEUED'
     },
+    miniFigureOverallDiscount: {
+        type:Boolean,
+        default: false
+    },
     finalPrice: Number,
     orderDate: Date
 })

@@ -36,7 +36,7 @@ describe('Product repository test', () => {
     it('it should get a product by id', async () => {
         const fakeProduct = {
             name: "MiniFigure",
-            unitPrice: 12.5,
+            unitPrice: 15,
             isFigure: true,
             isFamilyPack: false,
         }
@@ -45,6 +45,30 @@ describe('Product repository test', () => {
         const product = await ProductRepository.getProductById(String(newProduct._id))  
         product.should.have.property("_id")
         product._id.should.eql(String(newProduct._id))
+        return true
+    })
+    it('it should get products in a list of ids', async () => {
+        const fakeProduct1 = {
+            name: "MiniFigure",
+            unitPrice: 15,
+            isFigure: true,
+            isFamilyPack: false,
+        }
+        const fakeProduct2 = {
+            name: "MiniFigureVador",
+            unitPrice: 15,
+            isFigure: true,
+            isFamilyPack: false,
+        }
+        let newProduct1 = new Product(fakeProduct1)
+        let newProduct2 = new Product(fakeProduct2)
+        newProduct1 = await newProduct1.save()
+        newProduct2 = await newProduct2.save()
+        const products = await ProductRepository.getProductsInList([String(newProduct1._id), String(newProduct2._id)])  
+        products.should.all.have.property("_id")
+        products.length.should.eql(2)
+        products[0]._id.should.eql(String(newProduct1._id))
+        products[1]._id.should.eql(String(newProduct2._id))
         return true
     })
 })

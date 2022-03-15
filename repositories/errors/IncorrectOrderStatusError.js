@@ -6,10 +6,10 @@ class CustomError extends Error{
     }
 }
 
-class IncorrectOrderError extends CustomError{
+class IncorrectOrderStatusError extends CustomError{
     constructor(status){
         super(`Incorrect Order Status, found ${status} instead of 'QUEUD' | 'IN PROGRESS' | 'READY FOR DELIVERY'`)
     }
 }
 
-module.exports = IncorrectOrderError
+module.exports = IncorrectOrderStatusError

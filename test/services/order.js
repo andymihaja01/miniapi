@@ -271,6 +271,94 @@ describe('Order service test', () => {
         order.should.eql(updatedFakeOrder)
         return true
     })
+    it('it should update an order status by id', async () => {
+        const fakeUser = {
+            username:faker.name.firstName(),
+            salt:faker.internet.password(),
+            passwordHash:faker.internet.password()
+            
+        }
+        const fakeProduct = {
+            name: "MiniFigure",
+            unitPrice: 12.5,
+            isFigure: true
+        }
+        const nowDate = new Date(Date.now())
+        const fakeOrder = {
+            _id:"testorder",
+            customer: String(fakeUser._id),
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:null,
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+            discount:0.1,
+            shippingInfo:{
+                address:"new york"
+            },
+            status:'QUEUED',
+            orderDate: nowDate
+        }
+        const inProgressFakeOrder = {
+            _id:"testorder",
+            customer: String(fakeUser._id),
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:"NEW SN",
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+            discount:0.1,
+            shippingInfo:{
+                address:"new york"
+            },
+            status:'IN PROGRESS',
+            orderDate: nowDate
+        }
+        const readyFakeOrder = {
+            _id:"testorder",
+            customer: String(fakeUser._id),
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:"NEW SN",
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+            discount:0.1,
+            shippingInfo:{
+                address:"new york"
+            },
+            status:'READY FOR DELIVERY',
+            orderDate: nowDate
+        }
+        const orderRepositoryUpdateStatusByIdInProgressStub = sinon.stub(OrderRepository, "updateOrderStatusById").returns(inProgressFakeOrder) 
+        const order = await OrderService.updateOrderStatusById(String(fakeOrder._id), "IN PROGRESS")
+        orderRepositoryUpdateStatusByIdInProgressStub.calledOnce.should.be.true
+        orderRepositoryUpdateStatusByIdInProgressStub.getCall(0).args[0].should.eql(String(fakeOrder._id))
+        orderRepositoryUpdateStatusByIdInProgressStub.getCall(0).args[1].should.eql("IN PROGRESS")
+        order.should.exist
+        order.should.eql(inProgressFakeOrder)
+        orderRepositoryUpdateStatusByIdInProgressStub.restore()
+        const orderRepositoryUpdateStatusByIdReadyStub = sinon.stub(OrderRepository, "updateOrderStatusById").returns(readyFakeOrder) 
+        const readyOrder = await OrderService.updateOrderStatusById(String(fakeOrder._id), "READY FOR DELIVERY")
+        orderRepositoryUpdateStatusByIdReadyStub.calledOnce.should.be.true
+        orderRepositoryUpdateStatusByIdReadyStub.getCall(0).args[0].should.eql(String(fakeOrder._id))
+        orderRepositoryUpdateStatusByIdReadyStub.getCall(0).args[1].should.eql("READY FOR DELIVERY")
+        readyOrder.should.exist
+        readyOrder.should.eql(readyFakeOrder)
+        orderRepositoryUpdateStatusByIdReadyStub.restore()
+        return true
+    })
 })
 
 afterEach(function () {

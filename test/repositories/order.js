@@ -175,6 +175,48 @@ describe('Order repository test', () => {
         order.should.eql(updatedFakeOrder)
         return true
     })
+    it('it should update an order status by id', async () => {
+        const fakeUser = await new User({
+            username:faker.name.firstName(),
+            salt:faker.internet.password(),
+            passwordHash:faker.internet.password()
+            
+        }).save()
+        const fakeProduct = await new Product({
+            name: "MiniFigure",
+            unitPrice: 12.5,
+            isFigure: true
+        }).save()
+        const nowDate = new Date(Date.now())
+        const fakeOrder = {
+            customer: String(fakeUser._id),
+            products: [
+                {
+                    productId:String(fakeProduct._id),
+                    serialNumber:null,
+                    isFigure:fakeProduct.isFigure,
+                    originalUnitPrice: fakeProduct.unitPrice,
+                    finalUnitPrice: fakeProduct.unitPrice,
+                }
+            ],
+            discount:0,
+            shippingInfo:{
+                address:"new york"
+            },
+            status:'QUEUED',
+            orderDate: nowDate
+        }
+        const savedOrder = await new Order(fakeOrder).save()  
+        const orderInProgress = await OrderRepository.updateOrderStatusById(String(savedOrder._id), "IN PROGRESS")
+        orderInProgress.should.exist
+        orderInProgress.should.have.property("status")
+        orderInProgress.status.should.eql("IN PROGRESS")
+        const orderReady = await OrderRepository.updateOrderStatusById(String(savedOrder._id), "READY FOR DELIVERY")
+        orderReady.should.exist
+        orderReady.should.have.property("status")
+        orderReady.status.should.eql("READY FOR DELIVERY")
+        return true
+    })
     it('it should not throw an error with a valid status', async () => {
         OrderRepository.checkOrderStatus('QUEUED')
         OrderRepository.checkOrderStatus('IN PROGRESS')

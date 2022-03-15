@@ -12,7 +12,7 @@ chai.use(chaiHttp)
 chai.use(chaiAsPromised);
 chai.should()
 
-describe('Auth controller test', () => {
+describe('Auth controller routes test', () => {
     describe("/POST /auth/register" ,() => {
         const fakeUser = {
             username:faker.internet.userName, 

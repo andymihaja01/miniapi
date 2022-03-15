@@ -11,8 +11,8 @@ let should = chai.should()
 beforeEach(() => {
     useMiddlewareStub()
 })
-describe('Order test', () => {
-     describe('/POST createOrder', () => {
+describe('Order controller routes test', () => {
+    describe('/POST /order/createOrder', () => {
         it("it should not create an empty order",  (done) => {
             let order = {
             }
@@ -120,6 +120,42 @@ describe('Order test', () => {
                     orderUpdateSerialStub.restore()
                     done();
               });
+        })
+    })
+    describe("/POST /order/notifyOrderStatus/:orderId", () => {
+        it("it should update the order status", (done) => {
+            const fakeOrder = {
+                orderId: "testOrderId",
+                status: "READY FOR DELIVERY"
+            }
+            useMiddlewareStub()
+            const orderServiceUpdateStatusStub = sinon.stub(OrderService, "updateOrderStatusById").returns(fakeOrder)
+            chai.request(server)
+                .post(`/order/notifyOrderStatus/${fakeOrder.orderId}`)
+                .send({status:fakeOrder.status})
+                .end((err,res) => {
+                    res.should.have.status(200)
+                    orderServiceUpdateStatusStub.calledOnce.should.be.true
+                    orderServiceUpdateStatusStub.getCall(0).args[0].should.eql(fakeOrder.orderId)
+                    orderServiceUpdateStatusStub.getCall(0).args[1].should.eql(fakeOrder.status)
+                    restoreMiddlewareStub()
+                    done()
+                })
+        })
+        it("it should not update an order with incorrect status", (done) => {
+            const fakeOrder = {
+                orderId: "testOrderId",
+                status: "TOTALLY INCORRECT STATUS"
+            }
+            useMiddlewareStub()
+            chai.request(server)
+                .post(`/order/notifyOrderStatus/${fakeOrder.orderId}`)
+                .send({status:fakeOrder.status})
+                .end((err,res) => {
+                    res.should.have.status(400)
+                    restoreMiddlewareStub()
+                    done()
+                })
         })
     })
 })

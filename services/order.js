@@ -104,3 +104,8 @@ exports.updateSerialNumbersAndStatus = async function(orderId, orderData){
     const updatedOrder = await module.exports.updateOrder(orderId,order)
     return updatedOrder
 }
+
+exports.updateOrderStatusById = async function(orderId, status){
+    const updatedOrder = await OrderRepository.updateOrderStatusById(orderId, status)
+    return updatedOrder
+}

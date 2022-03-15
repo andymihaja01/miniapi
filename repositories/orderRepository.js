@@ -1,6 +1,6 @@
 const Product = require("#models/product.js")
 const Order = require("#models/order.js")
-const IncorrectOrderError = require('./errors/IncorrectOrderStatusError.js')
+const IncorrectOrderStatusError = require('./errors/IncorrectOrderStatusError.js')
 const { default: mongoose } = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
 const {cleanOrder} = require("#repositories/utils/modelCleaner.js")
@@ -73,6 +73,15 @@ async function updateOrderById(orderId, orderData){
     return cleanedSavedOrder
 }
 
+async function updateOrderStatusById(orderId, status){
+    checkOrderStatus(status)
+    const order = await Order.findOne({_id: mongoose.Types.ObjectId(orderId)}).exec()
+    order.status = status
+    const updatedOrder = await order.save()
+    const cleanedUpdatedOrder = cleanOrder(updatedOrder)
+    return cleanedUpdatedOrder
+}
+
 function fixOrderIds(order){
     order.products.forEach((product) => {
         product.productId = ObjectId(product.productId)
@@ -112,10 +121,10 @@ function stripOrder(order, updateDate = true){
     return strippedOrder
 }
 
+const validStatuses =  ['QUEUED', 'IN PROGRESS', 'READY FOR DELIVERY']
 function checkOrderStatus(status){
-    const validStatuses =  ['QUEUED', 'IN PROGRESS', 'READY FOR DELIVERY']
     if(!validStatuses.includes(status)){
-        throw new IncorrectOrderError(status)
+        throw new IncorrectOrderStatusError(status)
     }
     return status
 }
@@ -125,5 +134,6 @@ module.exports = {
     getOrderById,
     updateOrderById,
     fixOrderIds,
-    checkOrderStatus
+    checkOrderStatus,
+    updateOrderStatusById
 }
